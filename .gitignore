@@ -1,0 +1,4 @@
+__pycache__/
+.ipynb_checkpoints/
+cred/
+test_chat_with_gpt.ipynb
