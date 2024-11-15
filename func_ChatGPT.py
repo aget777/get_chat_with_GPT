@@ -188,13 +188,48 @@ def get_db_answer(user_question, model_name='gpt-3.5-turbo'):
 # In[ ]:
 
 
-def get_voice_gpt(text, file_path):
+# создаем функцию для преобразования текст в голос
+# на входе она принимает 
+# - text - текст для озвучки
+# - file_path - путь для сохранения файла вместе с его названием
+# - model - указываем модель (по умолчанию 'tts-1')
+# - voice - указываем название голоса для озвучки (по умолчанию 'onyx')
+# на выходе сохраняем озвученный файл в папку
+def get_voice_gpt(text, file_path, model='tts-1', voice='onyx'):
+#     создаем объект для подключения к чату
     client = OpenAI()
-    # create api request 
+# создаем АПИ запрос для озвучки
     with client.audio.speech.with_streaming_response.create(
-      model="tts-1",
-      voice="onyx",
+      model=model,
+      voice=voice,
       input=text
     ) as response:
         response.stream_to_file(file_path)
+
+
+# In[ ]:
+
+
+def get_simple_chat(dialog_list, prompt, model='gpt-3.5-turbo'):
+    client = OpenAI(api_key=api_key)
+    
+    dialog_dict = {}
+    message = [{"role": "user", "content": prompt}]
+
+    chat_completion = client.chat.completions.create(
+    model = model,
+    messages=message,
+    temperature=0,
+    )
+    
+    answer = chat_completion.choices[0].message.content
+    
+    dialog_dict['question'] = prompt
+    dialog_dict['answer'] = answer
+    
+    dialog_list.append(dialog_dict)
+
+    print(f'question:{prompt}')
+
+    return answer #chat_completion.choices[0].message.content
 
