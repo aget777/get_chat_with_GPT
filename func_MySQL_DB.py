@@ -1,19 +1,25 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[2]:
 
 
 import mysql.connector as connection
 import pandas as pd
 import warnings
 import sqlalchemy 
+import config
 
 
-# In[ ]:
+# In[3]:
 
 
-
+# забираем параметры подключения к БД
+server = config.server
+port = config.port
+database = config.database
+user_name = config.login
+password = config.password
 
 
 # In[ ]:
@@ -148,19 +154,27 @@ def delete_mysql_table(server, database, user_name, password, table_name_db, por
 # In[ ]:
 
 
+# функция для изменения типа данных по определенному полю
+# Принимает на вход 
+# server - адрес сервера БЕЗ порта / database - название базы данных
+# user_name - имя пользователя / password - пароль
+# table_name_db - название таблицы / column_name - название поля, в котором нужно изменить тип данных
+# data_type - тип данных, который нужно установить INT, VARCHAR(100), DATE
+# port - порт указан по умолчанию, можно заменить на другой
 def update_column_type(server, database, user_name, password, table_name_db, column_name, data_type, port='3306'):
     try:
+        # приводим название таблицы к нижнему регистру
         table_name_db = table_name_db.lower()
         # устанавливаем соединение с БД
         conn = connection.connect(host=server, port=port, database=database, user=user_name, password=password)
         
         if conn:
             print('Connection success')
-            
         cursor = conn.cursor()
         
         # формируем SQL запрос на создание новой таблицы
         sql = f'ALTER TABLE {table_name_db} MODIFY COLUMN `{column_name}` {data_type} NULL;'
+        
         # отправляем запрос на исполнение
         cursor.execute(sql)
         print(f'Column {column_name} has chanched: type - {data_type} / table - {table_name_db}')
