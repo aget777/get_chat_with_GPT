@@ -473,5 +473,26 @@ def get_chat_gpt_costs(usage_path, pricing_path, start_date, api_key=api_key):
     total_costs = df['total_costs'].sum().round(2)
 
     return print(f'Расходы за период с {min_date} по {max_date} в размере {total_costs} usd сохранены в файл')
+
+
+# In[ ]:
+
+
+# Получить остаток на счете
+# берем сумму пополнений из собственного файла эксель
+# берем сумму расходов из эксель файла
+# вычитам из первого второе, подучаем остаток
+
+def get_current_balance(usage_path, biling_path):
+    df_balance = pd.read_excel(biling_path)
+    total_amount = df_balance['amount (usd)'].sum()
     
+    df_costs = pd.read_excel(usage_path)
+    df_costs['total_costs'] = df_costs['total_costs'].astype('float')
+    total_costs = df_costs['total_costs'].sum()
+    
+    current_balance = (total_amount - total_costs).round(2)
+    print(f'Current balance: {current_balance}')
+    
+    return current_balance
 
